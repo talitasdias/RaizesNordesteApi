@@ -9,9 +9,12 @@ namespace RaizesNordeste.API.Application.Services
     {
         private readonly IEstoqueRepository _repository;
 
-        public EstoqueService(IEstoqueRepository repository)
+        private readonly IUnidadeRepository _unidadeRepository;
+
+        public EstoqueService(IEstoqueRepository repository, IUnidadeRepository unidadeRepository)
         {
             _repository = repository;
+            _unidadeRepository = unidadeRepository;
         }
 
         public async Task<List<EstoqueResponseDTO>> GetAllAsync()
@@ -47,6 +50,11 @@ namespace RaizesNordeste.API.Application.Services
 
         public async Task<IEnumerable<EstoqueResponseDTO>> GetByIdUnidadeAsync(int unidadeId)
         {
+            var unidadeExiste = await _unidadeRepository.ExistsAsync(unidadeId);
+
+            if (!unidadeExiste)
+                throw new KeyNotFoundException($"Unidade {unidadeId} não encontrada.");
+
             var estoque = await _repository.GetByIdUnidadeAsync(unidadeId);
 
             if (!estoque.Any())

@@ -31,5 +31,10 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
         {
             return await _dbContext.Unidades.FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await _dbContext.Unidades.AnyAsync(u => u.Id == id);
+        }
     }
 }

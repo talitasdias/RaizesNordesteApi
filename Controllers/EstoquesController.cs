@@ -41,12 +41,16 @@ namespace RaizesNordeste.API.Controllers
         //[Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetByIdUnidade(int id)
         {
-            var estoque = await _service.GetByIdUnidadeAsync(id);
+            try
+            {
+                var estoques = await _service.GetByIdUnidadeAsync(id);
 
-            if (estoque == null)
-                return NotFound("Estoque não encontrado.");
-
-            return Ok(estoque);
+                return Ok(estoques);                
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost]

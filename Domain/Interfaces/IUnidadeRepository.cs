@@ -7,5 +7,6 @@ namespace RaizesNordeste.API.Domain.Interfaces
         Task<IEnumerable<Unidade>> GetAllAsync();
         Task<Unidade?> GetById(int id);
         Task<Unidade> Create(Unidade unidade);
+        Task<bool> ExistsAsync(int id);
     }
 }
