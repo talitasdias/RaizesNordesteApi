@@ -4,7 +4,6 @@ using RaizesNordeste.API.Application.DTOs.Unidade;
 using RaizesNordeste.API.Application.Interfaces;
 using RaizesNordeste.API.Domain.Entities;
 using RaizesNordeste.API.Domain.Interfaces;
-using RaizesNordeste.API.Infrastructure.Persistence;
 
 namespace RaizesNordeste.API.Application.Services
 {
@@ -12,12 +11,10 @@ namespace RaizesNordeste.API.Application.Services
     {
         private readonly IUnidadeRepository _repository;
         private readonly IEstoqueRepository _estoqueRepository;
-        private readonly AppDbContext _context;
 
-        public UnidadeService(IUnidadeRepository repository, AppDbContext context, IEstoqueRepository estoqueRepository)
+        public UnidadeService(IUnidadeRepository repository, IEstoqueRepository estoqueRepository)
         {
             _repository = repository;
-            _context = context;
             _estoqueRepository = estoqueRepository;
         }
 
@@ -41,17 +38,26 @@ namespace RaizesNordeste.API.Application.Services
             };
         }
 
-        public async Task<IEnumerable<UnidadeResponseDTO>> GetAllAsync()
+        public async Task<PaginacaoResponseDTO<UnidadeResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            var unidadesEntity = await _repository.GetAllAsync();
+            var (unidades, total) = await _repository.GetAllAsync(pagina, tamanhoPagina);
 
-            return unidadesEntity.Select(x => new UnidadeResponseDTO
+            var itens = unidades.Select(x => new UnidadeResponseDTO
             {
                 Id = x.Id,
                 Nome = x.Nome,
                 Endereco = x.Endereco,
                 Ativa = x.Ativa
             }).ToList();
+
+            return new PaginacaoResponseDTO<UnidadeResponseDTO>
+            {
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                TotalItens = total,
+                TotalPaginas = (int)Math.Ceiling((double)total / tamanhoPagina),
+                Itens = itens
+            };
         }
 
         public async Task<UnidadeResponseDTO> GetById(int id)

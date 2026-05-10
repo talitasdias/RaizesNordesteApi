@@ -61,11 +61,11 @@ namespace RaizesNordeste.API.Application.Services
             };
         }
 
-        public async Task<IEnumerable<ProdutoResponseDTO>> GetAllAsync()
+        public async Task<PaginacaoResponseDTO<ProdutoResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            var produtos = await _repository.GetAllAsync();
+            var (produtos, total) = await _repository.GetAllAsync(pagina, tamanhoPagina);
 
-            return produtos.Select(p => new ProdutoResponseDTO
+            var itens = produtos.Select(p => new ProdutoResponseDTO
             {
                 Id = p.Id,
                 Nome = p.Nome,
@@ -73,6 +73,15 @@ namespace RaizesNordeste.API.Application.Services
                 Preco = p.Preco,
                 Disponivel = p.Disponivel
             }).ToList();
+
+            return new PaginacaoResponseDTO<ProdutoResponseDTO>
+            {
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                TotalItens = total,
+                TotalPaginas = (int)Math.Ceiling((double)total / tamanhoPagina),
+                Itens = itens
+            };
         }
     }
 }

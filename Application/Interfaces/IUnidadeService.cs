@@ -5,7 +5,7 @@ namespace RaizesNordeste.API.Application.Interfaces
 {
     public interface IUnidadeService
     {
-        Task<IEnumerable<UnidadeResponseDTO>> GetAllAsync();
+        Task<PaginacaoResponseDTO<UnidadeResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina);
         Task<UnidadeResponseDTO> GetById(int id);
         Task<UnidadeResponseDTO> Create(UnidadeCreateDTO unidade);
         Task<List<CardapioItemDTO>> GetCardapioAsync(int unidadeId);

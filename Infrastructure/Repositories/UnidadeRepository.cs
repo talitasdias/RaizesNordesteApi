@@ -22,9 +22,18 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
             return unidade;
         }
 
-        public async Task<IEnumerable<Unidade>> GetAllAsync()
+        public async Task<(IEnumerable<Unidade>, int)> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            return await _dbContext.Unidades.AsNoTracking().ToListAsync();
+            var query = _dbContext.Unidades.AsNoTracking();
+
+            var total = await query.CountAsync();
+
+            var unidades = await query
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .ToListAsync();
+
+            return (unidades, total);
         }
 
         public async Task<Unidade?> GetById(int id)

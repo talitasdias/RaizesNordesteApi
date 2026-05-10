@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RaizesNordeste.API.Domain.Entities;
+using RaizesNordeste.API.Domain.Enums;
 using RaizesNordeste.API.Domain.Interfaces;
 using RaizesNordeste.API.Infrastructure.Persistence;
 
@@ -22,14 +23,34 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
             return pedido;
         }
 
-        public async Task<List<Pedido>> GetByUsuarioIdAsync(int usuarioId)
+        public async Task<(List<Pedido>, int)> GetByUsuarioIdAsync(
+            int usuarioId,
+            int pagina,
+            int tamanhoPagina,
+            CanalPedido? canalPedido,
+            StatusPedido? statusPedido)
         {
-            return await _dbContext.Pedidos
+            var query = _dbContext.Pedidos
                 .Include(x => x.Itens)
                 .ThenInclude(x => x.Produto)
                 .Where(x => x.UsuarioId == usuarioId)
+                .AsQueryable();
+
+            if (canalPedido.HasValue)
+                query = query.Where(x => x.CanalPedido == canalPedido.Value);
+
+            if (statusPedido.HasValue)
+                query = query.Where(x => x.StatusPedido == statusPedido.Value);
+
+            var total = await query.CountAsync();
+
+            var pedidos = await query
                 .OrderByDescending(x => x.DataCriacao)
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
                 .ToListAsync();
+
+            return (pedidos, total);
         }
 
         public async Task<Pedido?> GetByIdAsync(int id)

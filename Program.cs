@@ -57,6 +57,17 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == 401)
+        await response.WriteAsJsonAsync(new { message = "Não autenticado. Faça login para continuar." });
+
+    if (response.StatusCode == 403)
+        await response.WriteAsJsonAsync(new { message = "Acesso negado. Você não tem permissão para acessar este recurso." });
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

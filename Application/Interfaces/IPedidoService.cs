@@ -1,4 +1,6 @@
+using RaizesNordeste.API.Application.DTOs;
 using RaizesNordeste.API.Application.DTOs.Pedido;
+using RaizesNordeste.API.Domain.Enums;
 
 namespace RaizesNordeste.API.Application.Interfaces
 {
@@ -6,7 +8,12 @@ namespace RaizesNordeste.API.Application.Interfaces
     {
         Task<PedidoResponseDTO> CreateAsync(int usuarioId, PedidoCreateDTO dto);
 
-        Task<List<PedidoResponseDTO>> GetByUsuarioIdAsync(int usuarioId);
+        Task<PaginacaoResponseDTO<PedidoResponseDTO>> GetByUsuarioIdAsync(
+            int usuarioId,
+            int pagina,
+            int tamanhoPagina,
+            CanalPedido? canalPedido,
+            StatusPedido? statusPedido);
 
         Task<bool> UpdateStatusAsync(int pedidoId, PedidoUpdateStatusDTO dto);
 

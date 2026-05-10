@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaizesNordeste.API.Application.DTOs.Pedido;
 using RaizesNordeste.API.Application.Interfaces;
+using RaizesNordeste.API.Domain.Enums;
 
 namespace RaizesNordeste.API.Controllers
 {
@@ -17,7 +18,11 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("meus-pedidos")]
-        public async Task<IActionResult> GetMyOrders()
+        public async Task<IActionResult> GetMyOrders(
+            [FromQuery] int pagina = 1,
+            [FromQuery] int tamanhoPagina = 10,
+            [FromQuery] CanalPedido? canalPedido = null,
+            [FromQuery] StatusPedido? statusPedido = null)
         {
             try
             {
@@ -29,7 +34,8 @@ namespace RaizesNordeste.API.Controllers
 
                 var usuarioId = int.Parse(usuarioIdClaim.Value);
 
-                var pedidos = await _service.GetByUsuarioIdAsync(usuarioId);
+                var pedidos = await _service.GetByUsuarioIdAsync(
+                    usuarioId, pagina, tamanhoPagina, canalPedido, statusPedido);
 
                 return Ok(pedidos);
             }

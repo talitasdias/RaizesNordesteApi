@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using RaizesNordeste.API.Domain.Entities;
 using RaizesNordeste.API.Domain.Interfaces;
@@ -14,12 +15,21 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Estoque>> GetAllAsync()
+        public async Task<(IEnumerable<Estoque>, int)> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            return _context.Estoques
+            var query = _context.Estoques
                 .Include(x => x.Produto)
                 .Include(x => x.Unidade)
-                .ToList();
+                .AsNoTracking();
+
+            var total = await query.CountAsync();
+
+            var estoques = await query
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .ToListAsync();
+
+            return (estoques, total);
         }
 
         public async Task<Estoque?> GetByProdutoAndUnidadeAsync(int produtoId, int unidadeId)

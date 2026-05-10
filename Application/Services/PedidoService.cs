@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RaizesNordeste.API.Application.DTOs;
 using RaizesNordeste.API.Application.DTOs.Pedido;
 using RaizesNordeste.API.Application.Interfaces;
 using RaizesNordeste.API.Domain.Entities;
@@ -89,15 +90,22 @@ namespace RaizesNordeste.API.Application.Services
             };
         }
 
-        public async Task<List<PedidoResponseDTO>> GetByUsuarioIdAsync(int usuarioId)
+        public async Task<PaginacaoResponseDTO<PedidoResponseDTO>> GetByUsuarioIdAsync(
+            int usuarioId,
+            int pagina,
+            int tamanhoPagina,
+            CanalPedido? canalPedido,
+            StatusPedido? statusPedido)
         {
-            var pedidos = await _repository.GetByUsuarioIdAsync(usuarioId);
+            var (pedidos, total) = await _repository.GetByUsuarioIdAsync(
+                usuarioId, pagina, tamanhoPagina, canalPedido, statusPedido);
 
-            return pedidos.Select(p => new PedidoResponseDTO
+            var itens = pedidos.Select(p => new PedidoResponseDTO
             {
                 Id = p.Id,
                 ValorTotal = p.ValorTotal,
                 StatusPedido = p.StatusPedido.ToString(),
+                CanalPedido = p.CanalPedido.ToString(),
                 DataCriacao = p.DataCriacao,
 
                 Itens = p.Itens.Select(i => new PedidoItemResponseDTO
@@ -109,6 +117,15 @@ namespace RaizesNordeste.API.Application.Services
                 }).ToList()
 
             }).ToList();
+
+            return new PaginacaoResponseDTO<PedidoResponseDTO>
+            {
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                TotalItens = total,
+                TotalPaginas = (int)Math.Ceiling((double)total / tamanhoPagina),
+                Itens = itens
+            };
         }
 
         public async Task<bool> UpdateStatusAsync(int pedidoId, PedidoUpdateStatusDTO dto)

@@ -1,3 +1,4 @@
+using RaizesNordeste.API.Application.DTOs;
 using RaizesNordeste.API.Application.DTOs.Estoque;
 using RaizesNordeste.API.Application.Interfaces;
 using RaizesNordeste.API.Domain.Entities;
@@ -17,11 +18,11 @@ namespace RaizesNordeste.API.Application.Services
             _unidadeRepository = unidadeRepository;
         }
 
-        public async Task<List<EstoqueResponseDTO>> GetAllAsync()
+        public async Task<PaginacaoResponseDTO<EstoqueResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            var estoques = await _repository.GetAllAsync();
+            var (estoques, total) = await _repository.GetAllAsync(pagina, tamanhoPagina);
 
-            return estoques.Select(x => new EstoqueResponseDTO
+            var itens = estoques.Select(x => new EstoqueResponseDTO
             {
                 Id = x.Id,
                 Produto = x.Produto.Nome,
@@ -29,6 +30,15 @@ namespace RaizesNordeste.API.Application.Services
                 Quantidade = x.Quantidade,
                 DataCriacao = x.DataCriacao
             }).ToList();
+
+            return new PaginacaoResponseDTO<EstoqueResponseDTO>
+            {
+                Pagina = pagina,
+                TamanhoPagina = tamanhoPagina,
+                TotalItens = total,
+                TotalPaginas = (int)Math.Ceiling((double)total / tamanhoPagina),
+                Itens = itens
+            };
         }
 
         public async Task<EstoqueResponseDTO> GetByIdAsync(int id)

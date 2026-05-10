@@ -1,10 +1,11 @@
+using RaizesNordeste.API.Application.DTOs;
 using RaizesNordeste.API.Application.DTOs.Estoque;
 
 namespace RaizesNordeste.API.Application.Interfaces
 {
     public interface IEstoqueService
     {
-        Task<List<EstoqueResponseDTO>> GetAllAsync();
+        Task<PaginacaoResponseDTO<EstoqueResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina);
 
         Task<EstoqueResponseDTO> GetByIdAsync(int id);
 

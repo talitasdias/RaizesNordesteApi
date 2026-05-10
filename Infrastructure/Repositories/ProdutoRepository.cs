@@ -14,9 +14,19 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<Produto>> GetAllAsync()
+        
+        public async Task<(IEnumerable<Produto>, int)> GetAllAsync(int pagina, int tamanhoPagina)
         {
-            return await _dbContext.Produtos.AsNoTracking().ToListAsync();
+            var query = _dbContext.Produtos.AsNoTracking();
+
+            var total = await query.CountAsync();
+
+            var produtos = await query
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .ToListAsync();
+
+            return (produtos, total);
         }
 
         public async Task<Produto?> GetByIdAsync(int id)

@@ -17,12 +17,12 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> GetAll()
+        //[Authorize(Roles = "Admin,Gerente")]
+        public async Task<IActionResult> GetAll([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
             {
-                var estoques = await _service.GetAllAsync();
+                var estoques = await _service.GetAllAsync(pagina, tamanhoPagina);
                 return Ok(estoques);
             }
             catch (Exception)
@@ -86,7 +86,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPatch("{id}/quantidade")]
-        //[Authorize(Roles = "Admin,Gerente")]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> UpdateQuantidade(int id, EstoqueUpdateQuantidadeDTO dto)
         {
             try

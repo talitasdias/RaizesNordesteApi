@@ -16,11 +16,11 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
             {
-                var result = await _produtoService.GetAllAsync();
+                var result = await _produtoService.GetAllAsync(pagina, tamanhoPagina);
                 return Ok(result);
             }
             catch (Exception)
