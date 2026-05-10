@@ -19,10 +19,17 @@ namespace RaizesNordeste.API.Controllers
     public async Task<IActionResult> ProcessarPagamento(
         PagamentoCreateDTO dto)
     {
-        var pagamento = await _service
-            .ProcessarPagamentoAsync(dto);
+            try
+            {
+                var pagamento = await _service.ProcessarPagamentoAsync(dto);
 
-        return Ok(pagamento);
+                return Ok(pagamento);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao buscar estoques da unidade.");
+            }
+        
     }
     }
 }

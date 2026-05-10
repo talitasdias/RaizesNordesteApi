@@ -14,12 +14,12 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Estoque>> GetAllAsync()
+        public async Task<IEnumerable<Estoque>> GetAllAsync()
         {
-            return await _context.Estoques
+            return _context.Estoques
                 .Include(x => x.Produto)
                 .Include(x => x.Unidade)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<Estoque?> GetByProdutoAndUnidadeAsync(int produtoId, int unidadeId)

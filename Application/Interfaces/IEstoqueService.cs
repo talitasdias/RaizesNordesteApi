@@ -6,7 +6,7 @@ namespace RaizesNordeste.API.Application.Interfaces
     {
         Task<List<EstoqueResponseDTO>> GetAllAsync();
 
-        Task<EstoqueResponseDTO?> GetByIdAsync(int id);
+        Task<EstoqueResponseDTO> GetByIdAsync(int id);
 
         Task<IEnumerable<EstoqueResponseDTO>> GetByIdUnidadeAsync(int unidadeId);
 

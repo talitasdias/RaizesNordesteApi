@@ -17,24 +17,38 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin,Gerente")]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetAll()
         {
-            var estoques = await _service.GetAllAsync();
-
-            return Ok(estoques);
+            try
+            {
+                var estoques = await _service.GetAllAsync();
+                return Ok(estoques);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao buscar estoques.");
+            }
         }
 
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetById(int id)
         {
-            var estoque = await _service.GetByIdAsync(id);
+            try
+            {
+                var estoque = await _service.GetByIdAsync(id);
 
-            if (estoque == null)
-                return NotFound("Estoque não encontrado.");
-
-            return Ok(estoque);
+                return Ok(estoque);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao buscar estoque.");
+            }
         }
 
         [HttpGet("unidade/{id}")]
@@ -44,12 +58,15 @@ namespace RaizesNordeste.API.Controllers
             try
             {
                 var estoques = await _service.GetByIdUnidadeAsync(id);
-
-                return Ok(estoques);                
+                return Ok(estoques);
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao buscar estoques da unidade.");
             }
         }
 
@@ -57,24 +74,35 @@ namespace RaizesNordeste.API.Controllers
         [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create(EstoqueCreateDTO dto)
         {
-            var estoque = await _service.CreateAsync(dto);
-
-            return Ok(estoque);
+            try
+            {
+                var estoque = await _service.CreateAsync(dto);
+                return Ok(estoque);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao criar estoque.");
+            }
         }
 
         [HttpPatch("{id}/quantidade")]
-        [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> UpdateQuantidade(
-            int id,
-            EstoqueUpdateQuantidadeDTO dto)
+        //[Authorize(Roles = "Admin,Gerente")]
+        public async Task<IActionResult> UpdateQuantidade(int id, EstoqueUpdateQuantidadeDTO dto)
         {
-            var updated = await _service
-                .UpdateQuantidadeAsync(id, dto);
+            try
+            {
+                var updated = await _service.UpdateQuantidadeAsync(id, dto);
 
-            if (!updated)
-                return NotFound("Estoque não encontrado.");
-
-            return NoContent();
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao atualizar quantidade do estoque.");
+            }
         }
     }
 }

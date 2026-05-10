@@ -4,7 +4,7 @@ namespace RaizesNordeste.API.Domain.Interfaces
 {
     public interface IEstoqueRepository
     {
-        Task<List<Estoque>> GetAllAsync();
+        Task<IEnumerable<Estoque>> GetAllAsync();
 
         Task<Estoque?> GetByIdAsync(int id);
 

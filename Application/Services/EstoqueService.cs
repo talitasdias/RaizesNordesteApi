@@ -31,12 +31,12 @@ namespace RaizesNordeste.API.Application.Services
             }).ToList();
         }
 
-        public async Task<EstoqueResponseDTO?> GetByIdAsync(int id)
+        public async Task<EstoqueResponseDTO> GetByIdAsync(int id)
         {
             var estoque = await _repository.GetByIdAsync(id);
 
             if (estoque == null)
-                return null;
+                throw new KeyNotFoundException($"Estoque de Id {id} não encontrado.");
 
             return new EstoqueResponseDTO
             {
@@ -94,14 +94,12 @@ namespace RaizesNordeste.API.Application.Services
             };
         }
 
-        public async Task<bool> UpdateQuantidadeAsync(
-            int id,
-            EstoqueUpdateQuantidadeDTO dto)
+        public async Task<bool> UpdateQuantidadeAsync(int id, EstoqueUpdateQuantidadeDTO dto)
         {
             var estoque = await _repository.GetByIdAsync(id);
 
             if (estoque == null)
-                return false;
+                throw new KeyNotFoundException($"Estoque de Id {id} não encontrado.");
 
             estoque.Quantidade = dto.Quantidade;
 

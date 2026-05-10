@@ -11,12 +11,14 @@ namespace RaizesNordeste.API.Application.Services
     public class UnidadeService : IUnidadeService
     {
         private readonly IUnidadeRepository _repository;
+        private readonly IEstoqueRepository _estoqueRepository;
         private readonly AppDbContext _context;
 
-        public UnidadeService(IUnidadeRepository repository, AppDbContext context)
+        public UnidadeService(IUnidadeRepository repository, AppDbContext context, IEstoqueRepository estoqueRepository)
         {
             _repository = repository;
             _context = context;
+            _estoqueRepository = estoqueRepository;
         }
 
         public async Task<UnidadeResponseDTO> Create(UnidadeCreateDTO unidadeDto)
@@ -52,11 +54,11 @@ namespace RaizesNordeste.API.Application.Services
             }).ToList();
         }
 
-        public async Task<UnidadeResponseDTO?> GetById(int id)
+        public async Task<UnidadeResponseDTO> GetById(int id)
         {
             var unidade = await _repository.GetById(id);
             if (unidade is null)
-                return null;
+                throw new KeyNotFoundException($"Unidade de Id {id} não encontrada.");
             
             return new UnidadeResponseDTO
             {
@@ -69,19 +71,21 @@ namespace RaizesNordeste.API.Application.Services
 
         public async Task<List<CardapioItemDTO>> GetCardapioAsync(int unidadeId)
         {
-            return await _context.Estoques
-                .Where(x =>
-                    x.UnidadeId == unidadeId &&
-                    x.Quantidade > 0)
-                .Select(x => new CardapioItemDTO
-                {
-                    ProdutoId = x.Produto.Id,
-                    Nome = x.Produto.Nome,
-                    Descricao = x.Produto.Descricao,
-                    Preco = x.Produto.Preco,
-                    QuantidadeDisponivel = x.Quantidade
-                })
-                .ToListAsync();
+            var unidade = await _repository.ExistsAsync(unidadeId);
+            if (!unidade)
+                throw new KeyNotFoundException($"Unidade de Id {unidadeId} não encontrada.");
+
+            var estoques = await _estoqueRepository.GetByIdUnidadeAsync(unidadeId);
+
+            return estoques.Where(x => x.Quantidade > 0)
+                    .Select(x => new CardapioItemDTO
+                    {
+                        ProdutoId = x.Produto.Id,
+                        Nome = x.Produto.Nome,
+                        Descricao = x.Produto.Descricao,
+                        Preco = x.Produto.Preco,
+                        QuantidadeDisponivel = x.Quantidade
+                    }).ToList();
         }
     }
 }

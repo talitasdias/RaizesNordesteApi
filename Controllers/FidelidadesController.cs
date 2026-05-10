@@ -20,20 +20,27 @@ namespace RaizesNordeste.API.Controllers
         [HttpGet("pontos")]
         public async Task<IActionResult> GetPontos()
         {
-            var usuarioId = int.Parse(
-                User.FindFirst(ClaimTypes.NameIdentifier)!
-                    .Value);
-
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(x => x.Id == usuarioId);
-
-            if (usuario == null)
-                return NotFound();
-
-            return Ok(new FidelidadePontosDTO
+            try
             {
-                Pontos = usuario.PontosFidelidade
-            });
+                var usuarioId = int.Parse(
+                    User.FindFirst(ClaimTypes.NameIdentifier)!
+                        .Value);
+
+                var usuario = await _context.Usuarios
+                    .FirstOrDefaultAsync(x => x.Id == usuarioId);
+
+                if (usuario == null)
+                    return NotFound("Usuário não encontrado.");
+
+                return Ok(new FidelidadePontosDTO
+                {
+                    Pontos = usuario.PontosFidelidade
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro ao buscar pontos de fidelidade.");
+            }
         }
     }
 }
