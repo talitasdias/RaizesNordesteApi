@@ -78,5 +78,10 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
 
             return produtoBanco;
         }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await _dbContext.Produtos.AnyAsync(u => u.Id == id);
+        }
     }
 }

@@ -5,7 +5,10 @@ using RaizesNordeste.API.Application.Interfaces;
 
 namespace RaizesNordeste.API.Controllers
 {
-    [ApiController]
+    [ApiController]    
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/[controller]")]
     public class UnidadesController : ControllerBase
     {
@@ -33,6 +36,7 @@ namespace RaizesNordeste.API.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -52,6 +56,7 @@ namespace RaizesNordeste.API.Controllers
 
         [HttpGet("{id}/cardapio")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCardapio(int id)
         {
             try
@@ -71,12 +76,13 @@ namespace RaizesNordeste.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Gerente,Admin")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create([FromBody] UnidadeCreateDTO unidadeDto)
         {
             try
             {
                 var result = await _service.Create(unidadeDto);
-                return Ok(result);
+                return StatusCode(201, result);
             }
             catch (Exception)
             {

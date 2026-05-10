@@ -9,13 +9,14 @@ namespace RaizesNordeste.API.Application.Services
     public class EstoqueService : IEstoqueService
     {
         private readonly IEstoqueRepository _repository;
-
         private readonly IUnidadeRepository _unidadeRepository;
+        private readonly IProdutoRepository _produtoRepository;
 
-        public EstoqueService(IEstoqueRepository repository, IUnidadeRepository unidadeRepository)
+        public EstoqueService(IEstoqueRepository repository, IUnidadeRepository unidadeRepository, IProdutoRepository produtoRepository)
         {
             _repository = repository;
             _unidadeRepository = unidadeRepository;
+            _produtoRepository = produtoRepository;
         }
 
         public async Task<PaginacaoResponseDTO<EstoqueResponseDTO>> GetAllAsync(int pagina, int tamanhoPagina)
@@ -80,9 +81,20 @@ namespace RaizesNordeste.API.Application.Services
             }).ToList();
         }
 
-        public async Task<EstoqueResponseDTO> CreateAsync(
-            EstoqueCreateDTO dto)
+        public async Task<EstoqueResponseDTO> CreateAsync(EstoqueCreateDTO dto)
         {
+            var unidadeExiste = await _unidadeRepository.ExistsAsync(dto.UnidadeId);
+            if (!unidadeExiste)
+                throw new KeyNotFoundException($"Unidade de Id {dto.UnidadeId} não encontrada.");
+
+            var produtoExiste = await _produtoRepository.ExistsAsync(dto.ProdutoId);
+            if (!produtoExiste)
+                throw new KeyNotFoundException($"Produto de Id {dto.ProdutoId} não encontrada.");
+            
+            var estoqueJaExiste = await _repository.ExistsAsync(dto.ProdutoId, dto.UnidadeId);
+            if (estoqueJaExiste)
+                throw new InvalidOperationException("Já existe um estoque para esse produto nessa unidade.");
+
             var estoque = new Estoque
             {
                 ProdutoId = dto.ProdutoId,

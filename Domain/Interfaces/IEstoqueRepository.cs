@@ -15,5 +15,7 @@ namespace RaizesNordeste.API.Domain.Interfaces
         Task<Estoque> CreateAsync(Estoque estoque);
 
         Task UpdateAsync(Estoque estoque);
+
+        Task<bool> ExistsAsync(int produtoId, int unidadeId);
     }
 }

@@ -10,5 +10,6 @@ namespace RaizesNordeste.API.Domain.Interfaces
         Task<Produto> CreateAsync(ProdutoCreateDTO produtoDto);
         Task<Produto?> UpdateAsync(ProdutoUpdateDTO produtoDto, int id);
         Task<bool> DeleteAsync(int id);
+        Task<bool> ExistsAsync(int id);
     }
 }

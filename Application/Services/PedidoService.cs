@@ -39,7 +39,7 @@ namespace RaizesNordeste.API.Application.Services
                 var produto = await _produtoRepository.GetByIdAsync(item.ProdutoId);
 
                 if (produto == null)
-                    throw new Exception($"Produto {item.ProdutoId} não encontrado.");
+                    throw new KeyNotFoundException($"Produto de Id {item.ProdutoId} não encontrado.");
                 
                 var estoque = await _estoqueRepository.GetByProdutoAndUnidadeAsync(item.ProdutoId, dto.UnidadeId);
 
@@ -48,8 +48,7 @@ namespace RaizesNordeste.API.Application.Services
                         $"Produto {produto.Nome} sem estoque.");
 
                 if (estoque.Quantidade < item.Quantidade)
-                    throw new Exception(
-                        $"Estoque insuficiente para {produto.Nome}.");
+                    throw new InvalidOperationException("Estoque insuficiente para realizar o pedido.");
 
                 estoque.Quantidade -= item.Quantidade;
 
@@ -86,6 +85,7 @@ namespace RaizesNordeste.API.Application.Services
                 Id = pedido.Id,
                 ValorTotal = pedido.ValorTotal,
                 StatusPedido = pedido.StatusPedido.ToString(),
+                CanalPedido = pedido.CanalPedido.ToString(),
                 DataCriacao = pedido.DataCriacao
             };
         }

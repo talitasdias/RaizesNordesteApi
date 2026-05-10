@@ -27,7 +27,7 @@ namespace RaizesNordeste.API.Application.Services
             if (await _context.Usuarios
                 .AnyAsync(x => x.Email == dto.Email))
             {
-                throw new Exception(
+                throw new InvalidOperationException(
                     "Email já cadastrado.");
             }
 
@@ -56,7 +56,7 @@ namespace RaizesNordeste.API.Application.Services
                     x.Email == dto.Email);
 
             if (usuario == null)
-                throw new Exception(
+                throw new UnauthorizedAccessException(
                     "Email ou senha inválidos.");
 
             bool senhaOk = BCrypt.Net.BCrypt.Verify(
@@ -64,7 +64,7 @@ namespace RaizesNordeste.API.Application.Services
                 usuario.SenhaHash);
 
             if (!senhaOk)
-                throw new Exception(
+                throw new UnauthorizedAccessException(
                     "Email ou senha inválidos.");
 
             return _tokenService.GenerateToken(usuario);

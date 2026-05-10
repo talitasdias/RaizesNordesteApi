@@ -6,6 +6,9 @@ using RaizesNordeste.API.Application.Interfaces;
 namespace RaizesNordeste.API.Controllers
 {
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/[controller]")]
     public class PagamentosController : ControllerBase
     {

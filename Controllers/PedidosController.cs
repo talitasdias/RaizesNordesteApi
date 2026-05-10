@@ -7,6 +7,9 @@ using RaizesNordeste.API.Domain.Enums;
 namespace RaizesNordeste.API.Controllers
 {
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/[controller]")]
     public class PedidosController : ControllerBase
     {
@@ -48,6 +51,8 @@ namespace RaizesNordeste.API.Controllers
 
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> Create(PedidoCreateDTO dto)
         {
             try
@@ -62,7 +67,11 @@ namespace RaizesNordeste.API.Controllers
 
                 var pedido = await _service.CreateAsync(usuarioId, dto);
 
-                return Ok(pedido);
+                return StatusCode(201, pedido);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return UnprocessableEntity(ex.Message);
             }
             catch (Exception)
             {

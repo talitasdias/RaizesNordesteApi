@@ -7,6 +7,9 @@ namespace RaizesNordeste.API.Controllers
 {
     [ApiController]
     [Authorize(Roles = "Gerente,Admin")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Route("api/[controller]")]
     public class EstoquesController : ControllerBase
     {
@@ -32,6 +35,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -69,12 +73,23 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Create(EstoqueCreateDTO dto)
         {
             try
             {
                 var estoque = await _service.CreateAsync(dto);
                 return Ok(estoque);
+            }            
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception)
             {
@@ -83,6 +98,8 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPatch("{id}/quantidade")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateQuantidade(int id, EstoqueUpdateQuantidadeDTO dto)
         {
             try

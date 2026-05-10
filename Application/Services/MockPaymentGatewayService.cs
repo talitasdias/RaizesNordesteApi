@@ -11,11 +11,11 @@ namespace RaizesNordeste.API.Application.Services
 
             bool aprovado;
 
-            if (metodoPagamento == 1) // Pix sempre aprova
+            if (metodoPagamento == 3) // Pix sempre aprova
             {
                 aprovado = true;
             }
-            else if (metodoPagamento == 2) // Cartão: depende do valor
+            else if (metodoPagamento == 1) // Cartão de crédito: depende do valor
             {
                 aprovado = valor <= 500;
             }

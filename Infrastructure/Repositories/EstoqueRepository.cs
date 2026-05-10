@@ -72,5 +72,11 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExistsAsync(int produtoId, int unidadeId)
+        {
+            return await _context.Estoques
+                .AnyAsync(x => x.ProdutoId == produtoId && x.UnidadeId == unidadeId);
+        }
     }
 }
