@@ -45,6 +45,23 @@ namespace RaizesNordeste.API.Application.Services
             };
         }
 
+        public async Task<IEnumerable<EstoqueResponseDTO>> GetByIdUnidadeAsync(int unidadeId)
+        {
+            var estoque = await _repository.GetByIdUnidadeAsync(unidadeId);
+
+            if (!estoque.Any())
+                return [];
+
+            return estoque.Select(x => new EstoqueResponseDTO
+            {
+                Id = x.Id,
+                Produto = x.Produto.Nome,
+                Unidade = x.Unidade.Nome,
+                Quantidade = x.Quantidade,
+                DataCriacao = x.DataCriacao
+            }).ToList();
+        }
+
         public async Task<EstoqueResponseDTO> CreateAsync(
             EstoqueCreateDTO dto)
         {

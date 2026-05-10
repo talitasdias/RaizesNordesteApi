@@ -8,6 +8,8 @@ namespace RaizesNordeste.API.Application.Interfaces
 
         Task<EstoqueResponseDTO?> GetByIdAsync(int id);
 
+        Task<IEnumerable<EstoqueResponseDTO>> GetByIdUnidadeAsync(int unidadeId);
+
         Task<EstoqueResponseDTO> CreateAsync(EstoqueCreateDTO dto);
 
         Task<bool> UpdateQuantidadeAsync(int id, EstoqueUpdateQuantidadeDTO dto);

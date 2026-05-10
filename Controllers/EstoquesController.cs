@@ -37,6 +37,18 @@ namespace RaizesNordeste.API.Controllers
             return Ok(estoque);
         }
 
+        [HttpGet("unidade/{id}")]
+        //[Authorize(Roles = "Admin,Gerente")]
+        public async Task<IActionResult> GetByIdUnidade(int id)
+        {
+            var estoque = await _service.GetByIdUnidadeAsync(id);
+
+            if (estoque == null)
+                return NotFound("Estoque não encontrado.");
+
+            return Ok(estoque);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create(EstoqueCreateDTO dto)

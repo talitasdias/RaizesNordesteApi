@@ -10,6 +10,8 @@ namespace RaizesNordeste.API.Domain.Interfaces
 
         Task<Estoque?> GetByProdutoAndUnidadeAsync(int produtoId, int unidadeId);
 
+        Task<IEnumerable<Estoque>> GetByIdUnidadeAsync(int unidadeId);
+
         Task<Estoque> CreateAsync(Estoque estoque);
 
         Task UpdateAsync(Estoque estoque);

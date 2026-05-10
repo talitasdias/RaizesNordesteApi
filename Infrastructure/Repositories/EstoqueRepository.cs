@@ -30,6 +30,15 @@ namespace RaizesNordeste.API.Infrastructure.Repositories
                     x.UnidadeId == unidadeId);
         }
 
+        public async Task<IEnumerable<Estoque>> GetByIdUnidadeAsync(int unidadeId)
+        {
+            return await _context.Estoques
+                    .Where(x => x.UnidadeId == unidadeId)
+                    .Include(x => x.Produto)
+                    .Include(x => x.Unidade)
+                    .ToListAsync();
+        }
+
         public async Task<Estoque?> GetByIdAsync(int id)
         {
             return await _context.Estoques
