@@ -18,6 +18,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("meus-pedidos")]
+        [Authorize]
         public async Task<IActionResult> GetMyOrders(
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanhoPagina = 10,
@@ -46,6 +47,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(PedidoCreateDTO dto)
         {
             try
@@ -69,7 +71,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPatch("{id}/status")]
-        //[Authorize(Roles = "Admin,Gerente")]
+        [Authorize(Roles = "Cozinha,Gerente,Admin")]
         public async Task<IActionResult> UpdateStatus(int id, PedidoUpdateStatusDTO dto)
         {
             try
@@ -88,6 +90,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPatch("{id}/cancelar")]
+        [Authorize(Roles = "Cliente,Atendente,Gerente,Admin")]
         public async Task<IActionResult> Cancel(int id)
         {
             try

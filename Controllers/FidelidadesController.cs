@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RaizesNordeste.API.Application.DTOs;
@@ -18,6 +19,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("pontos")]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> GetPontos()
         {
             try

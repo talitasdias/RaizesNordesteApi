@@ -17,6 +17,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
@@ -31,6 +32,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -68,7 +70,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Gerente,Admin")]
         public async Task<IActionResult> Create([FromBody] UnidadeCreateDTO unidadeDto)
         {
             try

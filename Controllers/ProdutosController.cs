@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaizesNordeste.API.Application.DTOs;
 using RaizesNordeste.API.Application.Interfaces;
@@ -16,6 +17,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
@@ -30,6 +32,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -48,6 +51,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Gerente,Admin")]
         public async Task<IActionResult> Create([FromBody] ProdutoCreateDTO produtoDto)
         {
             try
@@ -62,6 +66,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Gerente,Admin")]
         public async Task<IActionResult> Update([FromBody] ProdutoUpdateDTO produtoDto, int id)
         {
             try
@@ -83,6 +88,7 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente,Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try

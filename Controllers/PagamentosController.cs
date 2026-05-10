@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaizesNordeste.API.Application.DTOs.Pagamento;
 using RaizesNordeste.API.Application.Interfaces;
@@ -16,6 +17,7 @@ namespace RaizesNordeste.API.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "Cliente,Atendente")]
     public async Task<IActionResult> ProcessarPagamento(
         PagamentoCreateDTO dto)
     {

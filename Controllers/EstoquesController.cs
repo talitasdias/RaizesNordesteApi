@@ -6,6 +6,7 @@ using RaizesNordeste.API.Application.Interfaces;
 namespace RaizesNordeste.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Gerente,Admin")]
     [Route("api/[controller]")]
     public class EstoquesController : ControllerBase
     {
@@ -17,7 +18,6 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetAll([FromQuery] int pagina = 1, [FromQuery] int tamanhoPagina = 10)
         {
             try
@@ -32,7 +32,6 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -52,7 +51,6 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpGet("unidade/{id}")]
-        //[Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> GetByIdUnidade(int id)
         {
             try
@@ -71,7 +69,6 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create(EstoqueCreateDTO dto)
         {
             try
@@ -86,7 +83,6 @@ namespace RaizesNordeste.API.Controllers
         }
 
         [HttpPatch("{id}/quantidade")]
-        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> UpdateQuantidade(int id, EstoqueUpdateQuantidadeDTO dto)
         {
             try
